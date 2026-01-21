@@ -66,37 +66,130 @@ def prepare_data(df):
 
 def simple_sentiment_classifier(texts):
     """
-    Simple sentiment classifier based on keyword matching
+    Optimized sentiment classifier with enhanced word detection
     Returns: array of predictions ['Positive', 'Neutral', 'Negative']
     """
-    positive_words = [
-        'good', 'great', 'excellent', 'amazing', 'awesome', 'perfect', 
-        'love', 'best', 'wonderful', 'fantastic', 'brilliant', 'outstanding',
-        'superb', 'exceptional', 'impressive', 'delighted', 'satisfied'
-    ]
+    positive_words = {
+        # Strong positives (weight 2.0)
+        'love': 2, 'amazing': 2, 'awesome': 2, 'excellent': 2, 'perfect': 2,
+        'fantastic': 2, 'brilliant': 2, 'outstanding': 2, 'wonderful': 2, 'best': 2,
+        'superb': 2, 'exceptional': 2, 'phenomenal': 2, 'incredible': 2, 'magnificent': 2,
+        'glorious': 2, 'marvelous': 2, 'stellar': 2, 'thrilled': 2, 'delighted': 2,
+        'exquisite': 2, 'heavenly': 2, 'extraordinary': 2, 'rapturous': 2, 'elated': 2,
+        'ecstatic': 2, 'blissful': 2, 'joyful': 2, 'exultant': 2, 'splendid': 2,
+        'enchanting': 2, 'delightful': 2, 'sublime': 2, 'radiant': 2, 'remarkable': 2,
+        # Medium positives (weight 1.5)
+        'great': 1.5, 'impressive': 1.5, 'satisfied': 1.5, 'happy': 1.5,
+        'lovely': 1.5, 'beautiful': 1.5, 'charming': 1.5, 'adorable': 1.5,
+        'terrific': 1.5, 'grand': 1.5, 'pleased': 1.5, 'enjoyed': 1.5,
+        'impressed': 1.5, 'thrilled': 1.5, 'recommend': 1.5, 'ideal': 1.5,
+        'enchanted': 1.5, 'gorgeous': 1.5, 'valued': 1.5,
+        # Light positives (weight 1.0)
+        'good': 1, 'keen': 1, 'sharp': 1, 'smart': 1, 'nice': 0.7, 'pleasant': 1,
+        'worth': 0.8, 'value': 0.8, 'benefit': 1, 'advantage': 1,
+        'satisfactory': 0.5, 'fair': 0.5, 'decent': 0.5, 'okay': 0.3, 'alright': 0.3,
+        'fine': 0.3, 'capable': 0.8, 'adequate': 0.5, 'passable': 0.5, 'acceptable': 0.7,
+        'serviceable': 0.5, 'functional': 0.5, 'well': 1, 'super': 1.2, 'top': 1
+    }
     
-    negative_words = [
-        'bad', 'terrible', 'awful', 'horrible', 'worst', 'hate', 'poor',
-        'disappointing', 'useless', 'pathetic', 'dreadful', 'disgusting',
-        'unacceptable', 'rubbish', 'trash', 'annoying', 'frustrated'
-    ]
+    negative_words = {
+        # Strong negatives (weight 2.0)
+        'hate': 2, 'terrible': 2, 'awful': 2, 'horrible': 2, 'worst': 2,
+        'disappointing': 2, 'useless': 2, 'pathetic': 2, 'dreadful': 2, 'disgusting': 2,
+        'unacceptable': 2, 'rubbish': 2, 'trash': 2, 'regret': 2, 'broken': 2,
+        'failed': 2, 'failure': 2, 'appalling': 2, 'atrocious': 2, 'deplorable': 2,
+        'detestable': 2, 'diabolical': 2, 'revolting': 2, 'shameful': 2, 'contemptible': 2,
+        'nightmare': 2, 'disaster': 2, 'catastrophe': 2, 'abominable': 2, 'heinous': 2,
+        'vile': 2, 'odious': 2, 'nefarious': 2, 'sinful': 2, 'wicked': 2,
+        'sinister': 2, 'treacherous': 2, 'nightmarish': 2, 'calamitous': 2, 'insufferable': 2,
+        'repulsive': 2, 'loathsome': 2, 'abhorrent': 2, 'atrocious': 2, 'appalling': 2,
+        'filthy': 2, 'noxious': 2, 'nauseating': 2, 'bleak': 2, 'dire': 2,
+        # Medium negatives (weight 1.5)
+        'poor': 1.5, 'annoying': 1.5, 'frustrated': 1.5, 'angry': 1.5, 'upset': 1.5,
+        'disappointed': 1.5, 'mistake': 1.5, 'defect': 1.5, 'inferior': 1.5,
+        'mediocre': 1.5, 'subpar': 1.5, 'inadequate': 1.5, 'insufficient': 1.5,
+        'unwanted': 1.5, 'offensive': 1.5, 'alarming': 1.5, 'unpleasant': 1.5,
+        'unsuitable': 1.5, 'disastrous': 1.5, 'disheartening': 1.5, 'dismal': 1.5,
+        'ghastly': 1.5, 'horrendous': 1.5, 'despicable': 1.5, 'dreadfully': 1.5,
+        'contemptuous': 1.5, 'sordid': 1.5, 'deplorable': 1.5, 'damaging': 1.5,
+        # Light negatives (weight 1.0)
+        'bad': 1, 'weak': 1, 'issue': 1, 'problem': 1, 'bug': 1, 'sad': 1,
+        'evil': 1, 'fraud': 1, 'unfit': 1, 'harm': 1, 'loss': 1,
+        'dark': 0.8, 'dirty': 0.8, 'boring': 0.8
+    }
+    
+    negations = ['not', 'no', 'never', 'neither', 'nobody', 'nothing', 'nowhere', 
+                 'cannot', 'can\'t', 'don\'t', 'didn\'t', 'won\'t', 'wouldn\'t', 
+                 'hardly', 'barely', 'isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t']
+    
+    intensifiers = ['very', 'extremely', 'absolutely', 'definitely', 'surely', 
+                    'certainly', 'really', 'quite', 'so', 'such', 'too', 'truly', 
+                    'incredibly', 'truly', 'deeply', 'highly', 'utterly']
+    
+    weak_indicators = ['okay', 'alright', 'fair', 'decent', 'fine', 'average', 'standard']
     
     predictions = []
     
     for text in texts:
         text_lower = str(text).lower()
+        words = text_lower.split()
         
-        # Count positive and negative words
-        pos_count = sum(1 for word in positive_words if word in text_lower)
-        neg_count = sum(1 for word in negative_words if word in text_lower)
+        pos_score = 0.0
+        neg_score = 0.0
+        exclamation_count = text.count('!')
+        weak_words_count = 0
         
-        # Classify based on counts
-        if pos_count > neg_count:
-            predictions.append('Positive')
-        elif neg_count > pos_count:
-            predictions.append('Negative')
-        else:
+        for i, word in enumerate(words):
+            # Clean punctuation from word
+            clean_word = word.strip('.,!?;:()').lower()
+            
+            # Check for negation (look back 2 words)
+            has_negation = False
+            for j in range(max(0, i - 2), i):
+                if words[j].strip('.,!?;:()').lower() in negations:
+                    has_negation = True
+                    break
+            
+            # Check for intensifier (look back 1 word)
+            has_intensifier = False
+            for j in range(max(0, i - 1), i):
+                if words[j].strip('.,!?;:()').lower() in intensifiers:
+                    has_intensifier = True
+                    break
+            
+            intensifier_boost = 1.6 if has_intensifier else 1.0
+            
+            if clean_word in positive_words:
+                word_score = positive_words[clean_word]
+                if has_negation:
+                    neg_score += word_score * intensifier_boost
+                else:
+                    pos_score += word_score * intensifier_boost
+            elif clean_word in negative_words:
+                word_score = negative_words[clean_word]
+                if has_negation:
+                    pos_score += word_score * intensifier_boost
+                else:
+                    neg_score += word_score * intensifier_boost
+            elif clean_word in weak_indicators:
+                weak_words_count += 1
+        
+        # Punctuation indicators
+        if exclamation_count >= 2:
+            pos_score += 1.0
+        
+        # Classify with tuned threshold (0.7)
+        threshold = 0.7
+        diff = abs(pos_score - neg_score)
+        
+        if pos_score == 0 and neg_score == 0:
             predictions.append('Neutral')
+        elif diff <= threshold:
+            predictions.append('Neutral')
+        elif pos_score > neg_score:
+            predictions.append('Positive')
+        else:
+            predictions.append('Negative')
     
     return np.array(predictions)
 
