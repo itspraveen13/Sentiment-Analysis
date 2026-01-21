@@ -342,15 +342,7 @@ We welcome contributions! Here's how to help:
 
 ---
 
-## 📄 License
 
-This project is part of Team TechAnz's initiative to democratize AI-powered business intelligence.
-
----
-
-## 👥 Team
-
-**Developed by:** Team TechAnz  
 **Project Name:** Sentimetryx  
 **Vision:** Transform customer feedback into actionable business intelligence
 
