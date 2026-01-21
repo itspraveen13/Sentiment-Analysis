@@ -3,6 +3,13 @@ Evaluation Metrics Generator
 Generates confusion matrix and classification metrics using sklearn
 """
 
+import sys
+import io
+
+# Fix encoding for Windows console (UTF-8)
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 import pandas as pd
 import numpy as np
 from sklearn.metrics import (
@@ -21,16 +28,28 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 def load_sentiment_data(csv_path):
     """Load sentiment test data from CSV"""
+    # Handle both absolute and relative paths
+    if not os.path.isabs(csv_path):
+        # Try relative to Backend directory first
+        backend_path = os.path.join(os.path.dirname(__file__), csv_path)
+        if os.path.exists(backend_path):
+            csv_path = backend_path
+        # Then try relative to project root
+        else:
+            root_path = os.path.join(os.path.dirname(__file__), '..', csv_path)
+            if os.path.exists(root_path):
+                csv_path = root_path
+    
     try:
         df = pd.read_csv(csv_path)
-        print(f"✅ Loaded data from {csv_path}")
+        print(f"[OK] Loaded data from {csv_path}")
         print(f"   Rows: {len(df)}, Columns: {df.columns.tolist()}")
         return df
     except FileNotFoundError:
-        print(f"❌ Error: File not found - {csv_path}")
+        print(f"[WARN] CSV file not found: {csv_path}")
         return None
     except Exception as e:
-        print(f"❌ Error loading data: {e}")
+        print(f"[ERROR] Error loading data: {e}")
         return None
 
 
@@ -264,7 +283,7 @@ def generate_evaluation_metrics(y_true, y_pred, class_names=None):
 
 def evaluate_from_csv(csv_path):
     """Main evaluation function"""
-    print("\n🚀 Starting Sentiment Analysis Evaluation")
+    print("\n[EVAL] Starting Sentiment Analysis Evaluation")
     print("="*70)
     
     # Load data
@@ -278,7 +297,7 @@ def evaluate_from_csv(csv_path):
         return
     
     # Generate predictions
-    print("\n🔮 Generating predictions using keyword-based classifier...")
+    print("\n[INFO] Generating predictions using keyword-based classifier...")
     predictions = simple_sentiment_classifier(texts)
     
     # Ensure labels are in correct format
@@ -318,8 +337,24 @@ if __name__ == "__main__":
     # Example 1: Load from CSV
     csv_file = "data/Testing/sentiment_labeled.csv"
     
-    if os.path.exists(csv_file):
-        results = evaluate_from_csv(csv_file)
+    # Try to find the CSV file
+    csv_path = csv_file
+    if not os.path.isabs(csv_path):
+        # Try relative to Backend directory first
+        backend_path = os.path.join(os.path.dirname(__file__), csv_path)
+        if os.path.exists(backend_path):
+            csv_path = backend_path
+        # Then try relative to current working directory
+        elif os.path.exists(csv_path):
+            csv_path = csv_path
+        # Then try parent directory
+        else:
+            root_path = os.path.join(os.path.dirname(__file__), '..', csv_path)
+            if os.path.exists(root_path):
+                csv_path = root_path
+    
+    if os.path.exists(csv_path):
+        results = evaluate_from_csv(csv_path)
     else:
         print(f"⚠️  CSV file not found: {csv_file}")
         

@@ -1,7 +1,7 @@
 {
   "name": "sentimentrix",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,8 @@
     "start": "set NODE_OPTIONS=--no-warnings=DEP0060 && concurrently \"npm run backend\" \"npm run frontend\"",
     "start:frontend": "npm run frontend",
     "start:backend": "npm run backend",
-    "eval": "node Backend/evaluation_metrics.js"
+    "eval": "node Backend/evaluation_metrics.js",
+    "eval:py": "py Backend/evaluation_metrics.py"
   },
   "dependencies": {
     "@coreui/react-chartjs": "^2.1.3",
