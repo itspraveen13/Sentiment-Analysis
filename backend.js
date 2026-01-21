@@ -3,51 +3,29 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import multer from "multer";
 import fs from "fs";
+import dotenv from "dotenv";
+import {
+  SENTIMENT_CONFIG,
+  FILE_CONFIG,
+  API_CONFIG,
+  MESSAGES,
+  ENDPOINTS,
+} from "./backend-constants.js";
+
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
-const upload = multer({ dest: "uploads/" });
+const PORT = API_CONFIG.PORT;
+const upload = multer({ dest: FILE_CONFIG.UPLOAD_DIR });
 
-app.use(cors());
+app.use(cors({ origin: API_CONFIG.CORS_ORIGIN }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Sentiment analysis using keyword matching
+// Sentiment analysis using keyword matching and configured constants
 function analyzeSentiment(text) {
-  const positiveWords = [
-    "good",
-    "great",
-    "excellent",
-    "amazing",
-    "wonderful",
-    "love",
-    "best",
-    "awesome",
-    "perfect",
-    "fantastic",
-    "beautiful",
-    "happy",
-    "glad",
-    "satisfied",
-    "impressed",
-  ];
-  const negativeWords = [
-    "bad",
-    "terrible",
-    "awful",
-    "horrible",
-    "worst",
-    "hate",
-    "poor",
-    "disappointing",
-    "useless",
-    "waste",
-    "broken",
-    "angry",
-    "upset",
-    "dissatisfied",
-    "frustrated",
-  ];
+  const positiveWords = SENTIMENT_CONFIG.POSITIVE_WORDS;
+  const negativeWords = SENTIMENT_CONFIG.NEGATIVE_WORDS;
 
   const lowerText = text.toLowerCase();
   let positiveCount = 0;
@@ -73,12 +51,20 @@ function analyzeSentiment(text) {
 
   if (positiveCount > negativeCount) {
     sentiment = "Positive";
-    confidence = Math.min(0.99, 0.6 + positiveCount * 0.1);
+    confidence = Math.min(
+      SENTIMENT_CONFIG.MAX_CONFIDENCE,
+      SENTIMENT_CONFIG.BASE_CONFIDENCE +
+        positiveCount * SENTIMENT_CONFIG.POSITIVE_WEIGHT,
+    );
   } else if (negativeCount > positiveCount) {
     sentiment = "Negative";
-    confidence = Math.min(0.99, 0.6 + negativeCount * 0.1);
+    confidence = Math.min(
+      SENTIMENT_CONFIG.MAX_CONFIDENCE,
+      SENTIMENT_CONFIG.BASE_CONFIDENCE +
+        negativeCount * SENTIMENT_CONFIG.POSITIVE_WEIGHT,
+    );
   } else if (positiveCount > 0 || negativeCount > 0) {
-    confidence = 0.5;
+    confidence = SENTIMENT_CONFIG.CONFIDENCE_THRESHOLD;
   }
 
   return {
@@ -89,10 +75,14 @@ function analyzeSentiment(text) {
 }
 
 // Text analysis
-app.post("/text", (req, res) => {
+app.post(ENDPOINTS.TEXT, (req, res) => {
   try {
     const { text } = req.body;
-    if (!text) return res.status(400).json({ error: "No text provided" });
+    if (!text) return res.status(400).json({ error: MESSAGES.ERRORS.NO_TEXT });
+    if (text.length > 5000)
+      return res
+        .status(400)
+        .json({ error: "Text exceeds maximum length of 5000 characters" });
     const analysis = analyzeSentiment(text);
     res.json({
       predictions: [
@@ -105,41 +95,49 @@ app.post("/text", (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error analyzing text" });
+    console.error(error);
+    res.status(500).json({ error: MESSAGES.ERRORS.ANALYSIS_FAILED });
   }
 });
 
 // Dataset upload
-app.post("/dataset", upload.single("file"), (req, res) => {
+app.post(ENDPOINTS.DATASET, upload.single("file"), (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    if (!req.file)
+      return res.status(400).json({ error: MESSAGES.ERRORS.NO_FILE });
+
     const fileContent = fs.readFileSync(req.file.path, "utf8");
     const lines = fileContent
       .split("\n")
       .slice(1)
       .filter((line) => line.trim());
-    const predictions = lines.slice(0, 10).map((line) => {
-      const reviewText = line.split(",")[0] || "Sample review";
-      const analysis = analyzeSentiment(reviewText);
-      return {
-        text: reviewText.substring(0, 100),
-        sentiment: analysis.sentiment,
-        reasons: analysis.reasons,
-        confidence: analysis.confidence,
-      };
-    });
+
+    const predictions = lines
+      .slice(0, FILE_CONFIG.MAX_ROWS_PER_ANALYSIS)
+      .map((line) => {
+        const reviewText = line.split(",")[0] || "Sample review";
+        const analysis = analyzeSentiment(reviewText);
+        return {
+          text: reviewText.substring(0, 100),
+          sentiment: analysis.sentiment,
+          reasons: analysis.reasons,
+          confidence: analysis.confidence,
+        };
+      });
     fs.unlinkSync(req.file.path);
     res.json({ predictions });
   } catch (error) {
-    res.status(500).json({ error: "Error analyzing dataset" });
+    console.error(error);
+    if (req.file) fs.unlinkSync(req.file.path);
+    res.status(500).json({ error: MESSAGES.ERRORS.DATASET_FAILED });
   }
 });
 
 // Audio analysis
-app.post("/audio", upload.single("file"), (req, res) => {
+app.post(ENDPOINTS.AUDIO, upload.single("file"), (req, res) => {
   try {
     if (!req.file)
-      return res.status(400).json({ error: "No audio file uploaded" });
+      return res.status(400).json({ error: MESSAGES.ERRORS.NO_FILE });
     const mockTranscription =
       "This product is absolutely amazing and I love it. Great quality and excellent service!";
     const analysis = analyzeSentiment(mockTranscription);
@@ -155,12 +153,14 @@ app.post("/audio", upload.single("file"), (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error analyzing audio" });
+    console.error(error);
+    if (req.file) fs.unlinkSync(req.file.path);
+    res.status(500).json({ error: MESSAGES.ERRORS.AUDIO_FAILED });
   }
 });
 
 // Churn prediction
-app.post("/churn", upload.single("file"), (req, res) => {
+app.post(ENDPOINTS.CHURN, upload.single("file"), (req, res) => {
   try {
     res.json({
       predictions: [
@@ -172,12 +172,13 @@ app.post("/churn", upload.single("file"), (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error predicting churn" });
+    console.error(error);
+    res.status(500).json({ error: MESSAGES.ERRORS.CHURN_FAILED });
   }
 });
 
 // Fake detection
-app.post("/fake", upload.single("file"), (req, res) => {
+app.post(ENDPOINTS.FAKE, upload.single("file"), (req, res) => {
   try {
     res.json({
       predictions: [
@@ -190,12 +191,13 @@ app.post("/fake", upload.single("file"), (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error detecting fake reviews" });
+    console.error(error);
+    res.status(500).json({ error: MESSAGES.ERRORS.FAKE_FAILED });
   }
 });
 
 // Social listening
-app.post("/social", (req, res) => {
+app.post(ENDPOINTS.SOCIAL, (req, res) => {
   try {
     res.json({
       mentions: [
@@ -212,12 +214,13 @@ app.post("/social", (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error analyzing social media" });
+    console.error(error);
+    res.status(500).json({ error: MESSAGES.ERRORS.SOCIAL_FAILED });
   }
 });
 
 // Meme analysis
-app.post("/meme", upload.single("file"), (req, res) => {
+app.post(ENDPOINTS.MEME, upload.single("file"), (req, res) => {
   try {
     res.json({
       predictions: [
@@ -229,14 +232,20 @@ app.post("/meme", upload.single("file"), (req, res) => {
       ],
     });
   } catch (error) {
-    res.status(500).json({ error: "Error analyzing meme" });
+    console.error(error);
+    res.status(500).json({ error: MESSAGES.ERRORS.MEME_FAILED });
   }
 });
 
-app.get("/health", (req, res) => {
-  res.json({ status: "Backend running", timestamp: new Date() });
+app.get(ENDPOINTS.HEALTH, (req, res) => {
+  res.json({
+    status: "Backend running",
+    timestamp: new Date(),
+    environment: API_CONFIG.NODE_ENV,
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend API running on http://localhost:${PORT}`);
+  console.log(`\n✅ Backend API running on http://localhost:${PORT}`);
+  console.log(`📝 Environment: ${API_CONFIG.NODE_ENV}\n`);
 });

@@ -15,25 +15,33 @@ import pandas as pd
 import spacy
 import random
 from torchtext.data import TabularDataset
-import io
 import speech_recognition as sr
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 import re
-import pickle
-import io
-import speech_recognition as sr
-global sp_src_path,sp_trg_path,english,device
 from flask_cors import CORS
 from transformers import BertTokenizer
 from transformers import TFBertForSequenceClassification
-import pandas as pd
 import tensorflow as tf
 import clip
 from PIL import Image
+import os
+from dotenv import load_dotenv
+
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-reddit = praw.Reddit(client_id='LchMksVUmRUeyg', client_secret='gb1XyXX-r0ycV9KKFM-ujFVNOogO_w', user_agent='Data Scraping')
+
+# Reddit API Configuration from environment variables
+reddit = praw.Reddit(
+    client_id=os.getenv('REDDIT_CLIENT_ID', 'LchMksVUmRUeyg'),
+    client_secret=os.getenv('REDDIT_CLIENT_SECRET', 'gb1XyXX-r0ycV9KKFM-ujFVNOogO_w'),
+    user_agent=os.getenv('REDDIT_USER_AGENT', 'Data Scraping')
+)
 
 # Load BERT tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)

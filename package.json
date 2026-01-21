@@ -1,12 +1,17 @@
 {
-  "name": "jada-girls",
+  "name": "sentimentrix",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend": "node backend.js",
+    "frontend": "vite",
+    "start": "set NODE_OPTIONS=--no-warnings=DEP0060 && concurrently \"npm run backend\" \"npm run frontend\"",
+    "start:frontend": "npm run frontend",
+    "start:backend": "npm run backend"
   },
   "dependencies": {
     "@coreui/react-chartjs": "^2.1.3",
@@ -20,6 +25,7 @@
     "body-parser": "^2.2.2",
     "chart.js": "^4.3.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "multer": "^2.0.2",
     "react": "^18.2.0",
@@ -36,6 +42,7 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.1.0",
+    "concurrently": "^8.2.2",
     "vite": "^4.1.0"
   }
 }
