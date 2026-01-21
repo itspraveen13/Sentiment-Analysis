@@ -11,7 +11,8 @@
     "frontend": "vite",
     "start": "set NODE_OPTIONS=--no-warnings=DEP0060 && concurrently \"npm run backend\" \"npm run frontend\"",
     "start:frontend": "npm run frontend",
-    "start:backend": "npm run backend"
+    "start:backend": "npm run backend",
+    "eval": "node Backend/evaluation_metrics.js"
   },
   "dependencies": {
     "@coreui/react-chartjs": "^2.1.3",
