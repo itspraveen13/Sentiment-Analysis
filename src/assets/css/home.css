@@ -1,0 +1,107 @@
+#bgcl{
+    background-image: url('../img/gb.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+}
+
+a {
+    text-decoration: none;
+}
+ 
+#htitle{
+    padding: 15% 10% 5% 10% ;
+}
+
+h1{
+    font-size: 80px;
+    line-height: 80px;
+    color: #121e36;
+    font-weight: 400;
+}
+
+h2{
+    font-size: 35;
+    color: #121e36;
+    font-weight: 300;
+}
+
+h3{
+    font-size: 25px;
+    color: white;
+    font-weight: 300;
+    text-align: center;
+}
+
+#card{
+    width: 250px !important;
+    height: 180px !important;
+    padding: 3%;
+    border-radius: 14px !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0px 10px;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#card:hover {
+    transform: scale(1.1);
+}
+
+#icon{
+    color: white;
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.c1{
+    background-color: #121e36;
+}
+
+.c2{
+    background-color: #121e36;
+}
+
+.c3{
+    background-color: #121e36;
+}
+
+.c4{
+    background-color: #121e36;
+}
+
+@media only screen and (max-width:600px) {
+    #card{
+        width: 90% !important;
+        height: 100px !important;
+        padding: 3%;
+        border-radius: 10px !important;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin: 20px 2%;
+    }
+    #htitle{
+        padding: 60% 10% 5% 10% ;
+    }
+    
+    h1{
+        font-size: 50px;
+        line-height: 50px;
+        color: white;
+        font-weight: 400;
+    }
+    
+    h2{
+        font-size: 35;
+        color: #ffffff9b;
+        font-weight: 300;
+    }
+    #bgcl{
+        background-size: cover !important;
+    }
+}
+
