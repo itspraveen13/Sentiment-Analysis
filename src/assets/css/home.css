@@ -63,9 +63,9 @@ h3 {
 }
 
 #card {
-  width: 220px !important;
+  width: 225px !important;
   height: 140px !important;
-  padding: 14px 18px;
+  padding: 4px 10px;
   border-radius: 12px !important;
   background-size: cover;
   background-repeat: no-repeat;
