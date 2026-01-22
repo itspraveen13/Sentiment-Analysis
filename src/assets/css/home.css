@@ -1,107 +1,175 @@
-#bgcl{
-    background-image: url('../img/gb.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100vh;
+#bgcl {
+  background-image: url("../img/gb.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+#bgcl::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 18, 30, 0.45),
+    rgba(6, 18, 30, 0.55)
+  );
+  pointer-events: none;
 }
 
 a {
-    text-decoration: none;
-}
- 
-#htitle{
-    padding: 15% 10% 5% 10% ;
+  text-decoration: none;
 }
 
-h1{
-    font-size: 80px;
-    line-height: 80px;
-    color: #121e36;
-    font-weight: 400;
+#htitle {
+  padding: 12% 8% 4% 8%;
+  position: relative;
+  z-index: 2;
 }
 
-h2{
-    font-size: 35;
-    color: #121e36;
-    font-weight: 300;
+/* Arrange feature cards in a tighter, modern row with consistent gaps */
+#htitle + div {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 24px 8% 60px 8%;
+  position: relative;
+  z-index: 2;
 }
 
-h3{
-    font-size: 25px;
-    color: white;
-    font-weight: 300;
-    text-align: center;
+h1 {
+  font-size: 48px;
+  line-height: 56px;
+  color: var(--hero-heading, #f4f6f8);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-#card{
-    width: 250px !important;
-    height: 180px !important;
-    padding: 3%;
-    border-radius: 14px !important;
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin: 0px 10px;
-    transition: transform 0.2s ease-in-out;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+h2 {
+  font-size: 16px;
+  color: rgba(244, 246, 248, 0.9);
+  font-weight: 400;
+  margin-top: 12px;
+}
+
+h3 {
+  font-size: 18px;
+  color: rgba(244, 246, 248, 0.9);
+  font-weight: 500;
+  text-align: center;
+}
+
+#card {
+  width: 220px !important;
+  height: 140px !important;
+  padding: 14px 18px;
+  border-radius: 12px !important;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 8px;
+  transition:
+    transform 0.18s ease-in-out,
+    box-shadow 0.18s,
+    border-color 0.18s;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+  background: linear-gradient(
+    180deg,
+    rgba(19, 36, 56, 0.78),
+    rgba(9, 20, 33, 0.78)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(6px);
 }
 
 #card:hover {
-    transform: scale(1.1);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+  border-color: rgba(47, 164, 255, 0.14);
 }
 
-#icon{
-    color: white;
-    display: flex;
-    justify-content: center;
-    margin: 5px 0;
+#icon {
+  color: var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
 }
 
-.c1{
-    background-color: #121e36;
+/* icon sizing for MUI svgs */
+#icon svg {
+  font-size: 34px !important;
+  color: var(--accent) !important;
+}
+#icon img {
+  filter: brightness(1.05) saturate(0.95);
 }
 
-.c2{
-    background-color: #121e36;
+.c1 {
+  background-color: #121e36;
 }
 
-.c3{
-    background-color: #121e36;
+.c2 {
+  background-color: #121e36;
 }
 
-.c4{
-    background-color: #121e36;
+.c3 {
+  background-color: #121e36;
 }
 
-@media only screen and (max-width:600px) {
-    #card{
-        width: 90% !important;
-        height: 100px !important;
-        padding: 3%;
-        border-radius: 10px !important;
-        background-size: cover;
-        background-repeat: no-repeat;
-        margin: 20px 2%;
-    }
-    #htitle{
-        padding: 60% 10% 5% 10% ;
-    }
-    
-    h1{
-        font-size: 50px;
-        line-height: 50px;
-        color: white;
-        font-weight: 400;
-    }
-    
-    h2{
-        font-size: 35;
-        color: #ffffff9b;
-        font-weight: 300;
-    }
-    #bgcl{
-        background-size: cover !important;
-    }
+.c4 {
+  background-color: #121e36;
 }
 
+@media only screen and (max-width: 900px) {
+  #card {
+    width: 48% !important;
+    height: 120px !important;
+    margin: 10px 2%;
+  }
+  #htitle {
+    padding: 30% 6% 4% 6%;
+  }
+  h1 {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  h2 {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #card {
+    width: 90% !important;
+    height: 110px !important;
+  }
+  #htitle {
+    padding: 40% 6% 4% 6%;
+  }
+  h1 {
+    font-size: 28px;
+    line-height: 34px;
+  }
+  h2 {
+    font-size: 14px;
+  }
+  #bgcl {
+    background-size: cover !important;
+  }
+}
+
+/* bright card labels */
+#card h3 {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  padding-left: 6px;
+}
