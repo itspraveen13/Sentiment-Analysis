@@ -1,0 +1,46 @@
+#logincard{
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin:2% 20%;
+    padding: 5%;
+    border-radius: 10px;
+    color: #A09999 !important;
+}
+
+#tcCard{
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin:8% 25%;
+    border-radius: 10px;
+    color: #A09999 !important;
+}
+
+#cardimg{
+    width: 30vw;
+}
+
+#btn{
+    background-color:#404A86 ;
+    color: white;
+    border-radius: 5px;
+    padding:10px;
+    border-color: transparent;
+    font-size: 20px;
+    margin: 10px 50px;
+}
+
+#btn:hover{
+    background-color:#404A86 ;
+}
+
+@media only screen and (max-width:600px){
+    #logincard{
+        margin:20% 10% ;
+    }
+    #tcCard{
+        margin:20% 10% ;
+    }
+    #sub{
+        font-size: 13px;
+    }
+}

@@ -1,0 +1,14 @@
+@media only screen and (max-width: 600px){
+    #mainimg{
+        width:60% !important;
+        margin-top: 50px !important;
+        margin-left: 20% !important ;
+    }
+    #title{
+        font-size: 25px !important;
+        padding-top: 30px !important;
+    }
+    #title2{
+        font-size: 15px !important;
+    }
+}

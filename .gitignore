@@ -12,14 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Uploads directory
-uploads/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -30,3 +22,26 @@ uploads/
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local env files
+.env
+.env.*
+
+# OS / misc
+Thumbs.db

@@ -1,0 +1,116 @@
+#custombox{
+    margin: 5% 20%;
+    border-radius: 10px;
+    background-color: white;
+    padding: 50px 70px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+#custombox1 {
+    margin: 5% 30%;
+    border-radius: 10px;
+    background-color: white;
+    padding: 50px 70px;
+    box-shadow: 
+        5px 5px 2px 0px rgba(60, 64, 67, 0.3),
+        5px 5px 6px 2px rgba(60, 64, 67, 0.15);
+    font-size: 20px;
+}
+
+#boxheader{
+    font-size: 30px;
+    text-align: center;
+    color: #404A86;
+}
+
+#boxheader2{
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#boxheader3{
+    font-size: 20px;
+    font-weight: 500;
+    text-align: left ;
+}
+#boxheader4{
+    font-size: 20px;
+    font-weight: 500;
+    text-align: left ;
+}
+#boxsearch{
+    margin: 30px 0;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+#btns{
+    background-color: #7c8add;
+    color: white;
+    border-radius: 20px;
+    font-size: 15px;
+    padding: 10px 15px;
+    font-weight: 300;
+}
+
+#btns:hover{
+    background-color: #404A86;
+}
+
+#custombox3 {
+    margin: 3% 35% 0 35%;
+    border-radius: 10px;
+    background-color: white;
+    padding: 50px 70px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+#custombox2{
+    margin: 3% 20% 0 20% ;
+    border-radius: 10px;
+    background-color: white;
+    padding: 50px 70px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+@media only screen and (max-width: 600px) {
+    #tex{
+        display: none !important;
+    }
+    #custombox2{
+        margin: 0 10%;
+        padding: 50px 20px;
+    }
+    #custombox3{
+        margin: 0 10%;
+        padding: 50px 20px;
+    }
+    #custombox{
+        margin: 0 10%;
+    }
+    #custombox1{
+        margin: 3% 15%;
+    }
+    #boxsearch{
+        width: 200px !important;
+    }
+    #seb{
+        margin-top: 20px;
+    }
+    #boxheader3{
+        margin: 40px !important;
+    }
+    h2{
+        font-size: 13px;
+    }
+    #title{
+        font-size: 1px;
+    }
+    #histDiv{
+        margin-top: 15%;
+    }
+    #iconGrid{
+        padding-left: 15%;
+    }
+}

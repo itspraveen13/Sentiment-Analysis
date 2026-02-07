@@ -4,45 +4,59 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/src/assets/img/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentimentrix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- <link rel="shortcut icon" href="./src/assets/img/logo.png" type="image/x-icon"> -->
+    <link rel="stylesheet" href="./src/assets/img/bot.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,800;1,100;1,200;1,300;1,400&display=swap"
       rel="stylesheet"
     />
-
+    <link
+      rel="stylesheet"
+      href="https://bots.kore.ai/webclient/UI/dist/kore-ai-sdk.min.css"
+    />
     <style>
-      /* Base reset and refined typography for a modern SaaS look */
       * {
-        padding: 0;
         margin: 0;
-        box-sizing: border-box;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
       }
-      html {
-        font-size: 16px;
-      }
+
       body {
         background-color: #ffffff;
-        font-family:
-          "Poppins",
-          system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          "Helvetica Neue",
-          Arial,
-          sans-serif;
-        color: #0f2236; /* charcoal */
-        font-weight: 400;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden !important;
       }
-      /* keep text-transform local to nav or headings where needed */
+
+      #Link {
+        text-decoration: none !important;
+      }
+
+      @media only screen and (max-width: 600px) {
+        body {
+          overflow: visible !important;
+        }
+      }
+
+      /* New styles for Kore.ai container */
+      .kore-ai-container {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 9999; /* Adjust the z-index as needed */
+      }
     </style>
-    <title>Sentimetryx</title>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <div class="kore-ai-container">
+      <script src="https://bots.kore.ai/api/platform/websdkjs/247c19215e284d2f8bbae4f259e55a15d65a19276fb84a579629ba647b8539cfst43"></script>
+      <script>
+        KoreSDK.show(KoreSDK.chatConfig);
+      </script>
+    </div>
   </body>
 </html>

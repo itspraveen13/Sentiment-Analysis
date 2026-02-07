@@ -1,0 +1,37 @@
+{
+
+    "Attitude of Service Provider":[
+    "Encourage and provide training to service providers to improve their customer service skills, emphasizing positive attitude and empathy.",
+    "Implement regular customer feedback surveys to gauge customer satisfaction and address any issues related to service provider attitude promptly."
+    ],
+    "Attitude of Support Person":[
+    "Conduct ongoing training for support staff to enhance their communication and problem-solving skills, emphasizing a positive and customer-centric attitude",
+    "Implement a quality assurance program to monitor and assess support interactions, providing feedback and coaching for improvement."
+    ],
+    "Competitor Had Better Devices":[
+    "Evaluate and upgrade the range of devices and equipment offered to match or surpass competitors' offerings.",
+    "Offer device upgrade incentives or discounts to existing customers to retain them."
+    ],
+    "Competitor Made Better Offer":[
+    "Analyze competitor offers and consider adjusting pricing plans or services to remain competitive.",
+    "Launch special promotional offers and loyalty programs to retain existing customers."
+    ],
+    "Competitor Offered Higher Download Speeds":[
+    "Invest in infrastructure and technology to increase download speeds and match or exceed competitors.",
+    "Communicate improvements in download speeds to customers and offer discounts or incentives for upgrading."
+    ],
+    
+    "Competitor Offered More Data":[
+    "Review and adjust data plans to offer more competitive data allowances.",
+    "Implement data rollover or loyalty rewards for customers to accumulate unused data."
+    ],
+    
+    "Deceased":[
+    "Express condolences and offer a streamlined process for canceling the deceased customer's account.",
+    "Consider providing options for family members to transfer or close the account with minimal hassle."
+    ],
+    "Don't Know":[
+    "Improve communication and transparency about service offerings and billing to reduce customer confusion.",
+    "Provide easily accessible customer support resources for customers who have questions or concerns."
+    ]
+}
