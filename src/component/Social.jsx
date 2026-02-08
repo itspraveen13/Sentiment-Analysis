@@ -352,7 +352,9 @@ const Social = () => {
         })
         .catch((error) => {
           console.log(error);
-          setError('Error occurred while analyzing the text');
+          const serverError = error?.response?.data?.error;
+          setError(serverError ? `Error: ${serverError}` : 'Error occurred while analyzing the text');
+          setShowOutput(false);
           setIsLoading(false); // Set loading state to false if an error occurs
         });
     };
