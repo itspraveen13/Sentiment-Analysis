@@ -15,46 +15,38 @@ import collections
 import random
 from googleapiclient.errors import HttpError
 from googletrans import Translator
-from pathlib import Path
-import prawcore
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # Load BERT tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
-model = TFBertForSequenceClassification.from_pretrained(str(BASE_DIR / 'tf_model'))
+model = TFBertForSequenceClassification.from_pretrained('tf_model')
 labels = ['Negative', 'Positive']  # (0:negative, 1:positive)
 api_key = 'AIzaSyDvOvhzBGEHLnDpuOBpJu0L1ALVUATl-HI'
 
 negative_sentiment_words = []
-with open(BASE_DIR / 'neg_words.txt', 'r') as file:
+with open('neg_words.txt', 'r') as file:
         for line in file:
             line = line.strip().lower()
             negative_sentiment_words.append(line)
 positive_sentiment_words = [] 
-with open(BASE_DIR / 'pos_words.txt', 'r') as file:
+with open('pos_words.txt', 'r') as file:
         for line in file:
             line = line.strip().lower()
             positive_sentiment_words.append(line)
 reason_words = []
-with open(BASE_DIR / 'reason_words.txt', 'r') as file:
+with open('reason_words.txt', 'r') as file:
         for line in file:
             line = line.strip().lower()
             reason_words.append(line)
-with open(BASE_DIR / 'insight_dataset.json', 'r') as recommendations_file:
+with open('insight_dataset.json', 'r') as recommendations_file:
     recommendations_data = json.load(recommendations_file)
 
 translator = Translator()
 
 def convert_to_english(text):
     try:
-        if text is None:
-            return ""
-        if not isinstance(text, str):
-            text = str(text)
         lang_info = translator.detect(text)
         if lang_info.lang != 'en':
             print("diff")
@@ -65,7 +57,10 @@ def convert_to_english(text):
         print(f"Error translating to English: {e}")
         return text
 
-with open(BASE_DIR / 'topic_wise_bow.json', 'r') as json_file:
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+with open('topic_wise_bow.json', 'r') as json_file:
     titles_data = json.load(json_file)
 
 title_keywords = {}
@@ -81,24 +76,16 @@ reddit = praw.Reddit(
 
 def search_and_fetch_comments(keyword, count):
     # Search for posts containing the keyword
-    try:
-        results = reddit.subreddit('all').search(keyword, sort='relevance', time_filter='all', limit=count)
-    except (prawcore.exceptions.Forbidden, prawcore.exceptions.ResponseException, prawcore.exceptions.RequestException) as e:
-        print(f"Reddit API error: {e}")
-        return []
+    results = reddit.subreddit('all').search(keyword, sort='relevance', time_filter='all', limit=count)
     
     # List to store comments
     all_comments = []
 
-    try:
-        for submission in results:
-            submission.comments.replace_more(limit=None)
-            for comment in submission.comments.list():
-                if isinstance(comment, praw.models.Comment):
-                    all_comments.append(comment.body)
-    except (prawcore.exceptions.Forbidden, prawcore.exceptions.ResponseException, prawcore.exceptions.RequestException) as e:
-        print(f"Reddit API error: {e}")
-        return all_comments
+    for submission in results:
+        submission.comments.replace_more(limit=None)
+        for comment in submission.comments.list():
+            if isinstance(comment, praw.models.Comment):
+                all_comments.append(comment.body)
     
     return all_comments
 
@@ -151,20 +138,14 @@ def video_comments(video_id, count):
 
 def get_comments():    # Set the API key
     # Get the keyword, start date, and end date from the request
-    payload = request.json or {}
-    keyword = payload.get('keyword')
-    start_date_str = payload.get('start_date')
-    end_date_str = payload.get('end_date')
-    count = payload.get('count') or 0
-    max_count = payload.get('count') or 0
-    if not keyword or not start_date_str or not end_date_str or max_count <= 0:
-        return jsonify({'error': 'Missing or invalid input. Provide keyword, start_date, end_date, and count.'}), 400
+    keyword = request.json.get('keyword')
+    start_date_str = request.json.get('start_date')
+    end_date_str = request.json.get('end_date')
+    count = request.json.get('count')
+    max_count = request.json.get('count')
     # Convert start date and end date strings to datetime objects
-    try:
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
-    except Exception:
-        return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
 
     # Set the search parameters
     max_results = count
@@ -175,17 +156,14 @@ def get_comments():    # Set the API key
     youtube = build('youtube', 'v3', developerKey=api_key)
 
     # Call the search.list method to retrieve video results
-    try:
-        search_response = youtube.search().list(
-            q=keyword,
-            type='video',
-            part='id',
-            maxResults=max_results,
-            publishedAfter=published_after,
-            publishedBefore=published_before
-        ).execute()
-    except HttpError as e:
-        return jsonify({'error': f'YouTube API error: {e}'}), 502
+    search_response = youtube.search().list(
+        q=keyword,
+        type='video',
+        part='id',
+        maxResults=max_results,
+        publishedAfter=published_after,
+        publishedBefore=published_before
+    ).execute()
 
     # Extract the video IDs from the search results
     video_ids = [search_result['id']['videoId'] for search_result in search_response.get('items', [])]
@@ -204,10 +182,7 @@ def get_comments():    # Set the API key
             else:
                 break
 
-    try:
-        reddit_comments_list = search_and_fetch_comments(keyword, max_count)
-    except Exception as e:
-        return jsonify({'error': f'Reddit API error: {e}'}), 502
+    reddit_comments_list = search_and_fetch_comments(keyword, max_count)
     # Perform sentiment analysis on YouTube comments
     total_positive = 0
     total_negative = 0
@@ -297,31 +272,6 @@ def get_comments():    # Set the API key
 
             else:
                 print("i wonder how!")
-
-    if total_positive + total_negative == 0:
-        return jsonify({
-            'youtube' : youtube_result,
-            'reddit' : reddit_result,
-            'reddit_positive' : reddit_total_positive,
-            'reddit_negative' : reddit_total_negative,
-            'youtube_positive' : youtube_total_positive,
-            'youtube_negative' : youtube_total_negative,
-            'predictions': predictions,
-            'total_positive': total_positive,
-            'total_negative': total_negative,
-            'insight': {
-                'insight_text': 'No comments found for the given filters.',
-                'net_sentiment_score': 0,
-                'prevailing_sentiment': 'neutral',
-                'negative_sentiment_count': 0,
-                'positive_sentiment_count': 0,
-                'top_reasons_for_negative': [],
-                'top_titles_for_negative': [],
-                'top_reasons_for_positive': [],
-                'top_titles_for_positive': [],
-                'recommendations': []
-            }
-        })
 
     net_sentiment_score = (abs(total_positive - total_negative) / (total_positive + total_negative)) * 100
 

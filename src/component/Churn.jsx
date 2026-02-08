@@ -132,8 +132,7 @@ const Churn = () => {
           setPieChartData(pieChart)
         } catch (error) {
           console.error(error);
-          const serverError = error?.response?.data?.error;
-          setError(serverError ? `Error: ${serverError}` : 'Error occurred while analyzing');
+          setError('Error occurred while analyzing');
           setIsLoading(false);
         }
       };
@@ -159,7 +158,7 @@ const Churn = () => {
           <Box style={{ height: '100' }}>    
               {uploadedFile ? (
                 <>
-                <Box id="custombox3" style={{ position: 'relative', zIndex: 2 }}>
+                <Box id="custombox3">
                 <h2 id='boxheader'>Uploaded File</h2>
                   <Box style={{ textAlign: 'center', marginTop: '5%' }}>
                     <p>File Name: {fileName}</p>
@@ -172,7 +171,7 @@ const Churn = () => {
                     </Button>
                   </Box>
                 </Box>
-                <div id='tex' style={{ position: "absolute", top: "320px", pointerEvents: 'none', zIndex: 0 }}>
+                <div id='tex' style={{ position: "absolute", top: "320px" }}>
                     <img style={{ width: "1700px" }} src={BGimg} alt="img" />
                 </div>
                 </>
